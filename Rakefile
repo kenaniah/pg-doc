@@ -7,3 +7,8 @@ Rake::TestTask.new do |t|
 end
 
 task :default => :test
+
+task :run do
+  require "pg/doc"
+  PG::Doc::Web.run!
+end

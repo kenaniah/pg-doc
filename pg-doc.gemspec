@@ -25,4 +25,5 @@ Gem::Specification.new do |gem|
   gem.add_development_dependency "minitest"
 
   gem.add_dependency "pg"
+  gem.add_dependency "sinatra"
 end

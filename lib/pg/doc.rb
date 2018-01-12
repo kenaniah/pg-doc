@@ -1,8 +1,8 @@
 require "pg"
 require "pg/doc/version"
+require "pg/doc/web"
 
 module PG
   module Doc
-    # Your code goes here...
   end
 end
