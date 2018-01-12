@@ -1,5 +1,9 @@
 # PG::Doc
 
+[![Gem Version](https://badge.fury.io/rb/pg-doc.svg)](http://badge.fury.io/rb/pg-doc)
+[![Build Status](https://travis-ci.org/kenaniah/pg-doc.svg?branch=master)](http://travis-ci.org/kenaniah/pg-doc)
+[![Dependency Status](https://gemnasium.com/kenaniah/pg-doc.svg)](https://gemnasium.com/kenaniah/pg-doc)
+
 **This gem is under initial development. 0.1.0 will be the first release.**
 
 ## Installation
