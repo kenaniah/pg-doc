@@ -1,3 +1,4 @@
+require "pg"
 require "pg/doc/version"
 
 module PG

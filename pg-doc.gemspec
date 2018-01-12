@@ -2,22 +2,26 @@ lib = File.expand_path("../lib", __FILE__)
 $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
 require "pg/doc/version"
 
-Gem::Specification.new do |spec|
-  spec.name          = "pg-doc"
-  spec.version       = PG::Doc::VERSION
-  spec.authors       = ["Kenaniah Cerny"]
-  spec.email         = ["kenaniah@gmail.com"]
+Gem::Specification.new do |gem|
+  gem.name          = "pg-doc"
+  gem.version       = PG::Doc::VERSION
+  gem.authors       = ["Kenaniah Cerny"]
+  gem.email         = ["kenaniah@gmail.com"]
+  gem.license       = "MIT"
 
-  spec.summary       = "Automatic documentation for your PostgreSQL database"
-  spec.homepage      = "https://github.com/kenaniah/pg-doc"
+  gem.summary       = "Automatic documentation for your PostgreSQL database"
+  gem.homepage      = "https://github.com/kenaniah/pg-doc"
 
-  spec.files         = `git ls-files -z`.split("\x0").reject do |f|
+  gem.files         = `git ls-files -z`.split("\x0").reject do |f|
     f.match(%r{^(test|spec|features)/})
   end
-  spec.bindir        = "exe"
-  spec.executables   = spec.files.grep(%r{^exe/}) { |f| File.basename(f) }
-  spec.require_paths = ["lib"]
+  gem.bindir        = "exe"
+  gem.executables   = gem.files.grep(%r{^exe/}) { |f| File.basename(f) }
+  gem.require_paths = ["lib"]
 
-  spec.add_development_dependency "bundler", "~> 1.16"
-  spec.add_development_dependency "rake", "~> 10.0"
+  gem.add_development_dependency "bundler", "~> 1.16"
+  gem.add_development_dependency "rake", "~> 10.0"
+  gem.add_development_dependency "appraisal"
+
+  gem.add_dependency "pg"
 end
