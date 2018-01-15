@@ -23,6 +23,7 @@ Gem::Specification.new do |gem|
   gem.add_development_dependency "rake", "~> 10.0"
   gem.add_development_dependency "appraisal"
   gem.add_development_dependency "minitest"
+  gem.add_development_dependency "pry"
 
   gem.add_dependency "pg"
   gem.add_dependency "sinatra"
