@@ -9,18 +9,15 @@
 	<a class="item">
 		<span><i class="database icon"></i> Schemas</span> <i class="caret right icon"></i>
 	</a>
-
-	<a class="item" href="#">Link Item <i class="dropdown icon"></i></a>
-	<a class="item" href="#">Link Item</a>
 	<div class="divider"></div>
-		<div class="item">
-			<i class="dropdown icon"></i>
-			Sub Menu
-			<div class="menu">
-				<a class="item" href="#"><span><i class="table icon"></i> Link Item</span></a>
-				<a class="item" href="#"><span><i class="table icon"></i> Link Item</span></a>
-			</div>
+	<% @cache[:tables].each do |schema, rows| %>
+	<div class="item">
+		<span><i class="database icon"></i> <%= schema %></span> <i class="caret right icon"></i>
+		<div class="menu">
+			<% rows.each do |schema_name, table_name| %>
+			<a class="item" href="#"><span><i class="table icon"></i> <%= table_name %></span></a>
+			<% end %>
 		</div>
-		<a class="item" href="#">Link Item</a>
 	</div>
+	<% end %>
 </div>
