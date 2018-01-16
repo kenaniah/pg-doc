@@ -22,6 +22,11 @@ Or install it yourself as:
 
     $ gem install pg-doc
 
+## Usage
+
+ - [ ] Document `mount PG::Doc::Web(url, options)`
+ - [ ] Document `:schema_filter` option
+
 ## Contributing
 
 Bug reports and pull requests are welcome on GitHub at https://github.com/kenaniah/pg-doc.

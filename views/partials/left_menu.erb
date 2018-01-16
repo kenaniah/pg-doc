@@ -9,6 +9,10 @@
 	</a> -->
 
 	<% @cache[:schemas].each do |schema,| %>
+		<%
+			tables = @cache[:tables].fetch schema, []
+			views = @cache[:views].fetch schema, []
+		%>
 		<div class="js-submenu link item">
 			<span><i class="database icon"></i> <%= schema %></span>
 			<i class="caret right icon"></i>
@@ -19,10 +23,20 @@
 			<div class="subheader">Schema</div>
 			<a class="item" href="<%= url "/schemas/#{schema}" %>"><span><i class="database icon"></i> Schema Overview</span></a>
 
-			<div class="subheader">Tables</div>
-			<% (@cache[:tables].fetch(schema) || []).each do |schema_name, table_name| %>
-				<a class="item" href="<%= url "/schemas/#{schema}/tables/#{table_name}" %>"><span><i class="table icon"></i> <%= table_name %></span></a>
+			<% unless tables.empty? %>
+				<div class="subheader">Tables</div>
+				<% tables.each do |schema_name, table_name| %>
+					<a class="item" href="<%= url "/schemas/#{schema}/tables/#{table_name}" %>"><span><i class="table icon"></i> <%= table_name %></span></a>
+				<% end %>
 			<% end %>
+
+			<% unless views.empty? %>
+				<div class="subheader">Views</div>
+				<% views.each do |schema_name, view_name| %>
+					<a class="item" href="<%= url "/schemas/#{schema}/views/#{view_name}" %>"><span><i class="table icon"></i> <%= view_name %></span></a>
+				<% end %>
+			<% end %>
+
 		</div>
 	<% end %>
 
