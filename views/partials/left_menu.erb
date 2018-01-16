@@ -4,20 +4,19 @@
 		<span><i class="home icon"></i> Home</span>
 	</a>
 	<a class="item">
-		<span><i class="folder open icon"></i> Documentation</span>
+		<span><i class="folder icon"></i> Documentation</span>
 	</a>
-	<a class="item">
-		<span><i class="database icon"></i> Schemas</span> <i class="caret right icon"></i>
-	</a>
-	<div class="divider"></div>
 	<% @cache[:tables].each do |schema, rows| %>
-	<div class="item">
-		<span><i class="database icon"></i> <%= schema %></span> <i class="caret right icon"></i>
-		<div class="menu">
-			<% rows.each do |schema_name, table_name| %>
-			<a class="item" href="#"><span><i class="table icon"></i> <%= table_name %></span></a>
-			<% end %>
+		<div class="js-schema item">
+			<span>
+				<i class="database icon"></i> <%= schema %></span>
+				<i class="caret right icon"></i>
+				<i class="caret down icon transition hidden"></i>
+				<div class="menu transition hidden">
+					<% rows.each do |schema_name, table_name| %>
+						<a class="item" href="#"><span><i class="table icon"></i> <%= table_name %></span></a>
+					<% end %>
+				</div>
 		</div>
-	</div>
 	<% end %>
 </div>

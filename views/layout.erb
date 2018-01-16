@@ -39,6 +39,12 @@
 		</div>
 	</div>
 
+	<script>
+		$(document).on("click", ".js-schema", (event) => {
+			$(event.target).find("DIV.menu, I.caret").transition('toggle')
+		})
+	</script>
+
 </body>
 
 </html>
