@@ -1,6 +1,13 @@
 BODY {
 	background-color: #FFFFFF;
 }
+CODE {
+	font-size: 90%;
+	color: rgb(199, 37, 78);
+	background-color: rgb(249, 242, 244);
+	padding: 2px 4px;
+	border-radius: 4px;
+}
 .main.container {
 	margin-top: 7em;
 }
@@ -12,4 +19,18 @@ BODY {
 	margin: 1em 1em 0.2em 1em;
 	padding-bottom: 0.3em;
 	border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+.ui.visible.left.sidebar~.pusher {
+	width: calc(100% - 260px);
+}
+.ui.main H1,
+.ui.main H2,
+.ui.main H3,
+.ui.main H4,
+.ui.main H5,
+.ui.main H6 {
+	margin-top: 32px;
+	margin-bottom: 16px;
+	padding-bottom: 2px;
+	border-bottom: 1px solid rgb(234, 236, 239);
 }

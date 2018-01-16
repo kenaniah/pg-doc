@@ -8,7 +8,7 @@ Gem::Specification.new do |gem|
   gem.authors       = ["Kenaniah Cerny"]
   gem.email         = ["kenaniah@gmail.com"]
   gem.license       = "MIT"
-  gem.required_ruby_version = '2.3.0'
+  gem.required_ruby_version = '~> 2.3'
 
   gem.summary       = "Automatic documentation for your PostgreSQL database"
   gem.homepage      = "https://github.com/kenaniah/pg-doc"
@@ -26,6 +26,7 @@ Gem::Specification.new do |gem|
   gem.add_development_dependency "minitest"
   gem.add_development_dependency "pry"
 
-  gem.add_dependency "pg"
-  gem.add_dependency "sinatra"
+  gem.add_dependency "pg", "~> 1.0"
+  gem.add_dependency "sinatra", "~> 2.0"
+  gem.add_dependency "redcarpet", "~> 3.4"
 end

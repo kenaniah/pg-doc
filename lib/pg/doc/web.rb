@@ -31,10 +31,18 @@ module PG
         erb :"objects/#{params["object_type"].sub(/s$/, "")}", locals: {object: object}
       end
 
+      # Defines helpers
+      helpers do
+        def render_markdown file
+          erb :"includes/markdown", locals: {file: File.join(@docs_path, file)} if @docs_path
+        end
+      end
+
       # Initializes the internal state for this instance
       def setup connection, opts
 
         @conn = PG.connect connection
+        @docs_path = opts.fetch(:docs_path, nil)
         @schema_filter = opts.fetch(:schema_filter, nil) || ->(field) {
           <<~SQL
             #{field} NOT ILIKE 'pg_%'

@@ -1,0 +1,16 @@
+<%
+if File.exists? file
+	markdown = Redcarpet::Markdown.new Redcarpet::Render::HTML, tables: true, no_intra_emphasis: true
+	contents = markdown.render File.read(file)
+	contents = contents.gsub("<table>", "<table class='ui celled table'>")
+	contents = contents.gsub("../../../images/", "")
+%>
+	<div class="rendered-markdown">
+		<%= contents %>
+	</div>
+<% else %>
+	<div class="ui warning message">
+		<div class="header">No markdown file found</div>
+		The file <code><%= file %></code> does not exist.
+	</div>
+<% end %>
