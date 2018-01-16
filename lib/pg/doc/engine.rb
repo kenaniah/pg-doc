@@ -4,13 +4,13 @@ module PG
   module Doc
 
     # Returns an instantiated (and configured) rack app
-    def self.Engine connection, opts = {}
-      PG::Doc::Web.new do |app|
+    def self.new connection, opts = {}
+      PG::Doc::Engine.new do |app|
         app.setup connection, opts
       end
     end
 
-    class Web < Sinatra::Base
+    class Engine < Sinatra::Base
 
       set :public_folder, Proc.new { File.join(root, "../../../static") }
       set :views, Proc.new { File.join(root, "../../../views") }
@@ -34,7 +34,7 @@ module PG
       # Defines helpers
       helpers do
         def render_markdown file
-          erb :"includes/markdown", locals: {file: File.join(@docs_path, file)} if @docs_path
+          erb :"includes/markdown", locals: {file: File.join(@path_to_markdowns, file)} if @path_to_markdowns
         end
       end
 
@@ -42,7 +42,7 @@ module PG
       def setup connection, opts
 
         @conn = PG.connect connection
-        @docs_path = opts.fetch(:docs_path, nil)
+        @path_to_markdowns = opts.fetch(:path_to_markdowns, nil)
         @schema_filter = opts.fetch(:schema_filter, nil) || ->(field) {
           <<~SQL
             #{field} NOT ILIKE 'pg_%'

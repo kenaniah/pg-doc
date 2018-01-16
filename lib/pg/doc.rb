@@ -1,6 +1,6 @@
 require "pg"
 require "pg/doc/version"
-require "pg/doc/web"
+require "pg/doc/engine"
 
 require "base64"
 require "mime-types"
