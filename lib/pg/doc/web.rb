@@ -23,6 +23,17 @@ module PG
       def setup connection
         @conn = PG.connect connection
         @cache = Hash.new
+        @cache[:schemas] = @conn.exec(<<~SQL).values
+          SELECT
+            schema_name
+          FROM
+            information_schema.schemata
+          WHERE
+            schema_name NOT ILIKE 'pg_%'
+            AND schema_name != 'information_schema'
+          ORDER BY
+            1
+        SQL
         @cache[:tables] = @conn.exec(<<~SQL).values.group_by{ |row| row[0] }
           SELECT
             table_schema, table_name

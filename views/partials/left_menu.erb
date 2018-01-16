@@ -8,14 +8,19 @@
 		<span><i class="folder icon"></i> Documentation</span>
 	</a> -->
 
-	<% @cache[:tables].each do |schema, rows| %>
+	<% @cache[:schemas].each do |schema,| %>
 		<div class="js-submenu link item">
 			<span><i class="database icon"></i> <%= schema %></span>
 			<i class="caret right icon"></i>
 			<i class="caret down icon transition hidden"></i>
 		</div>
 		<div class="menu transition hidden">
-			<% rows.each do |schema_name, table_name| %>
+
+			<div class="subheader">Schema</div>
+			<a class="item" href="<%= url "/schemas/#{schema}" %>"><span><i class="database icon"></i> Schema Overview</span></a>
+
+			<div class="subheader">Tables</div>
+			<% (@cache[:tables].fetch(schema) || []).each do |schema_name, table_name| %>
 				<a class="item" href="<%= url "/schemas/#{schema}/tables/#{table_name}" %>"><span><i class="table icon"></i> <%= table_name %></span></a>
 			<% end %>
 		</div>
