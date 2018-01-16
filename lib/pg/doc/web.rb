@@ -132,7 +132,7 @@ module PG
           h[:schemas][schema][type][name][:columns] << row
         }
 
-        # Load functions
+        # Load functions (note: this currently does not support overloaded functions)
         _recordset = @conn.exec <<~SQL
           SELECT
             routine_schema,
