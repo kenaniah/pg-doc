@@ -4,7 +4,7 @@ module PG
   module Doc
 
     # Returns an instantiated (and configured) rack app
-    def self.Web connection, opts = {}
+    def self.Engine connection, opts = {}
       PG::Doc::Web.new do |app|
         app.setup connection, opts
       end
@@ -20,13 +20,15 @@ module PG
       end
 
       get '/schemas/:schema' do
-        pass unless @cache.dig :schemas, params["schema"]
-        erb :"objects/schema"
+        object = @cache.dig :schemas, params["schema"]
+        pass unless object
+        erb :"objects/schema", locals: {object: object}
       end
 
       get '/schemas/:schema/:object_type/:name' do
-        pass unless @cache.dig :schemas, params["schema"], params["object_type"].to_sym, params["name"]
-        erb :"objects/#{params["object_type"].sub(/s$/, "")}"
+        object = @cache.dig :schemas, params["schema"], params["object_type"].to_sym, params["name"]
+        pass unless object
+        erb :"objects/#{params["object_type"].sub(/s$/, "")}", locals: {object: object}
       end
 
       # Initializes the internal state for this instance
@@ -73,7 +75,10 @@ module PG
             1, 2
         SQL
         _recordset.each_with_object(@cache){ |row, h|
-          h[:schemas][row["table_schema"]][:tables][row["table_name"]] = {}
+          h[:schemas][row["table_schema"]][:tables][row["table_name"]] = {
+            columns: [],
+            comment: nil
+          }
         }
 
         # Load views
@@ -89,8 +94,36 @@ module PG
         SQL
         _recordset.each_with_object(@cache){ |row, h|
           h[:schemas][row["table_schema"]][:views][row["table_name"]] = {
-            view_definition: row["view_definition"]
+            view_definition: row["view_definition"],
+            columns: [],
+            comment: nil
           }
+        }
+
+        # Load columns
+        _recordset = @conn.exec <<~SQL
+          SELECT
+            c.table_schema,
+            c.table_name,
+            c.column_name,
+            c.ordinal_position,
+            c.data_type,
+            c.is_nullable,
+            c.column_default,
+            t.table_type
+          FROM
+            information_schema.columns c
+            JOIN information_schema.tables t USING (table_catalog, table_schema, table_name)
+          WHERE
+            #{@schema_filter.call :table_schema}
+          ORDER BY
+            1, 2, 4
+        SQL
+        _recordset.each_with_object(@cache){ |row, h|
+          type = row.delete("table_type") == "VIEW" ? :views : :tables
+          schema = row.delete "table_schema"
+          name = row.delete "table_name"
+          h[:schemas][schema][type][name][:columns] << row
         }
 
         # Load functions
@@ -107,7 +140,8 @@ module PG
         SQL
         _recordset.each_with_object(@cache){ |row, h|
           h[:schemas][row["routine_schema"]][:functions][row["routine_name"]] = {
-            external_language: row["external_language"]
+            external_language: row["external_language"],
+            comment: nil
           }
         }
 
