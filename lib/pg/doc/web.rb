@@ -61,6 +61,17 @@ module PG
           ORDER BY
             1, 2
         SQL
+        @cache[:functions] = @conn.exec(<<~SQL).map.group_by{ |row| row["routine_schema"] }
+          SELECT
+            routine_schema, routine_name, routine_definition, external_language
+          FROM
+            information_schema.routines
+          WHERE
+            #{@schema_filter.call :routine_schema}
+            AND external_name IS NULL
+          ORDER BY
+            1, 2
+        SQL
       end
 
     end

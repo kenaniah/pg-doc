@@ -12,6 +12,7 @@
 		<%
 			tables = @cache[:tables].fetch schema, []
 			views = @cache[:views].fetch schema, []
+			functions = @cache[:functions].fetch schema, []
 		%>
 		<div class="js-submenu link item">
 			<span><i class="database icon"></i> <%= schema %></span>
@@ -34,6 +35,13 @@
 				<div class="subheader">Views</div>
 				<% views.each do |schema_name, view_name| %>
 					<a class="item" href="<%= url "/schemas/#{schema}/views/#{view_name}" %>"><span><i class="table icon"></i> <%= view_name %></span></a>
+				<% end %>
+			<% end %>
+
+			<% unless functions.empty? %>
+				<div class="subheader">Functions</div>
+				<% functions.each do |row| %>
+					<a class="item" href="<%= url "/schemas/#{row["routine_schema"]}/functions/#{row["routine_name"]}" %>"><span><i class="table icon"></i> <%= row["routine_name"] %></span></a>
 				<% end %>
 			<% end %>
 
