@@ -66,7 +66,9 @@ module PG
         # Load tables
         _recordset = @conn.exec <<~SQL
           SELECT
-            table_schema, table_name
+            table_schema,
+            table_name,
+            obj_description((table_schema || '.' || table_name)::regclass::oid, 'pg_class') as comment
           FROM
             information_schema.tables
           WHERE
@@ -77,14 +79,17 @@ module PG
         _recordset.each_with_object(@cache){ |row, h|
           h[:schemas][row["table_schema"]][:tables][row["table_name"]] = {
             columns: [],
-            comment: nil
+            comment: row["comment"]
           }
         }
 
         # Load views
         _recordset = @conn.exec <<~SQL
           SELECT
-            table_schema, table_name, view_definition
+            table_schema,
+            table_name,
+            view_definition,
+            obj_description((table_schema || '.' || table_name)::regclass::oid, 'pg_class') as comment
           FROM
             information_schema.views
           WHERE
@@ -96,7 +101,7 @@ module PG
           h[:schemas][row["table_schema"]][:views][row["table_name"]] = {
             view_definition: row["view_definition"],
             columns: [],
-            comment: nil
+            comment: row["comment"]
           }
         }
 
@@ -110,6 +115,7 @@ module PG
             c.data_type,
             c.is_nullable,
             c.column_default,
+            col_description((c.table_schema || '.' || c.table_name)::regclass::oid, c.ordinal_position) as comment,
             t.table_type
           FROM
             information_schema.columns c
@@ -129,7 +135,12 @@ module PG
         # Load functions
         _recordset = @conn.exec <<~SQL
           SELECT
-            routine_schema, routine_name, routine_definition, external_language
+            routine_schema,
+            routine_name,
+            routine_definition,
+            external_language,
+            pg_get_function_identity_arguments((routine_schema || '.' || routine_name)::regproc) as arguments,
+            obj_description((routine_schema || '.' || routine_name)::regproc::oid, 'pg_proc') as comment
           FROM
             information_schema.routines
           WHERE
@@ -141,12 +152,41 @@ module PG
         _recordset.each_with_object(@cache){ |row, h|
           h[:schemas][row["routine_schema"]][:functions][row["routine_name"]] = {
             external_language: row["external_language"],
-            comment: nil
+            comment: row["comment"],
+            arguments: row["arguments"].split(",").map{ |arg| parse_function_argument arg }
           }
         }
 
       end
 
+      def parse_function_argument arg
+
+        # Determine the argument's mode
+        arg = arg.strip
+        argmode = case arg
+        when /^VARIADIC\b/, /^OUT\b/, /^INOUT\b/, /^IN\b/
+          _parts = arg.split(" ")
+          _mode = _parts.shift
+          arg = _parts.join(" ")
+          _mode
+        else
+          "IN"
+        end
+
+        # Determine it's name and type
+        if arg.count(" ") > 0
+          name, *type = arg.split " "
+          type = type.join " "
+        else
+          name = nil
+          type = arg
+        end
+
+        {name: name, type: type, mode: argmode}
+
+      end
+
     end
+
   end
 end
