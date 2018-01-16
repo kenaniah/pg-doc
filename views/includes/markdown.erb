@@ -3,7 +3,23 @@ if File.exists? file
 	markdown = Redcarpet::Markdown.new Redcarpet::Render::HTML, tables: true, no_intra_emphasis: true
 	contents = markdown.render File.read(file)
 	contents = contents.gsub("<table>", "<table class='ui celled table'>")
-	contents = contents.gsub("../../../images/", "")
+	contents = contents.gsub("<img ", "<img class='ui fluid image'")
+	contents = contents.gsub(/<img[^>]+src=(['"])([^'"]+)\1[^>]*>/i) { |match|
+
+		next $2 if $2.include? "//"
+
+		# Attempt to find the refrenced file
+		img = File.expand_path($2, File.dirname(file))
+		next $2 unless File.exists? img
+
+		# Only allow images through
+		mime_type = MIME::Types.type_for(File.extname img).first.to_s
+		next $2 unless mime_type.start_with? "image/"
+
+		# Base64 encode & inline the image
+		match.sub $2, "data:#{mime_type};base64,#{Base64.encode64(File.read img)}"
+
+	}
 %>
 	<div class="rendered-markdown">
 		<%= contents %>

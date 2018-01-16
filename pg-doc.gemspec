@@ -29,4 +29,5 @@ Gem::Specification.new do |gem|
   gem.add_dependency "pg", "~> 1.0"
   gem.add_dependency "sinatra", "~> 2.0"
   gem.add_dependency "redcarpet", "~> 3.4"
+  gem.add_dependency "mime-types", "~> 3.0"
 end
