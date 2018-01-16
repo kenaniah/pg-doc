@@ -22,10 +22,14 @@ Or install it yourself as:
 
     $ gem install pg-doc
 
-## Usage
+## To Do
 
+ - [ ] Document usage
  - [ ] Document `mount PG::Doc::Web(url, options)`
  - [ ] Document `:schema_filter` option
+ - [ ] Create and document caching to disk via marshal
+ - [ ] Create and document the markdown folder structure
+ - [ ] Write UI
 
 ## Contributing
 
