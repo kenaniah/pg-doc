@@ -1,22 +1,26 @@
 <div class="ui left vertical inverted visible sidebar menu">
 
-	<a class="item">
+	<a class="item" href="<%= url '/' %>">
 		<span><i class="home icon"></i> Home</span>
 	</a>
-	<a class="item">
+
+	<!-- <a class="item">
 		<span><i class="folder icon"></i> Documentation</span>
-	</a>
+	</a> -->
+
 	<% @cache[:tables].each do |schema, rows| %>
-		<div class="js-schema item">
-			<span>
-				<i class="database icon"></i> <%= schema %></span>
-				<i class="caret right icon"></i>
-				<i class="caret down icon transition hidden"></i>
-				<div class="menu transition hidden">
-					<% rows.each do |schema_name, table_name| %>
-						<a class="item" href="#"><span><i class="table icon"></i> <%= table_name %></span></a>
-					<% end %>
-				</div>
+		<div class="js-submenu link item">
+			<span><i class="database icon"></i> <%= schema %></span>
+			<i class="caret right icon"></i>
+			<i class="caret down icon transition hidden"></i>
+		</div>
+		<div class="menu transition hidden">
+			<% rows.each do |schema_name, table_name| %>
+				<a class="item" href="<%= url "/schemas/#{schema}/tables/#{table_name}" %>"><span><i class="table icon"></i> <%= table_name %></span></a>
+			<% end %>
 		</div>
 	<% end %>
+
+	<div class="scroll-padding"></div>
+
 </div>

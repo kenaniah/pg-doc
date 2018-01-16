@@ -12,6 +12,13 @@ module PG
 
     class Web < Sinatra::Base
 
+      set :public_folder, Proc.new { File.join(root, "../../../static") }
+      set :views, Proc.new { File.join(root, "../../../views") }
+
+      get '/' do
+        erb :index
+      end
+
       # Sets the database connection to be used
       def setup connection
         @conn = PG.connect connection
@@ -27,11 +34,6 @@ module PG
           ORDER BY
             1, 2
         SQL
-      end
-
-      set :views, Proc.new { File.join(root, "../../../views") }
-      get '/' do
-        erb :index
       end
 
     end

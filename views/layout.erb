@@ -12,6 +12,7 @@
 	<link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.2.13/semantic.min.css">
 	<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.2.13/semantic.min.js"></script>
+	<script src="<%= url '/pg-doc.js' %>"></script>
 
 	<style type="text/css">
 		body {
@@ -22,6 +23,9 @@
 		}
 		.main.container {
 			margin-top: 7em;
+		}
+		.scroll-padding {
+			padding-bottom: 20vh;
 		}
 	</style>
 
@@ -38,12 +42,6 @@
 			<%= yield %>
 		</div>
 	</div>
-
-	<script>
-		$(document).on("click", ".js-schema", (event) => {
-			$(event.target).find("DIV.menu, I.caret").transition('toggle')
-		})
-	</script>
 
 </body>
 
