@@ -4,16 +4,8 @@
 		<span><i class="home icon"></i> Home</span>
 	</a>
 
-	<!-- <a class="item">
-		<span><i class="folder icon"></i> Documentation</span>
-	</a> -->
+	<% @cache[:schemas].each do |schema, data| %>
 
-	<% @cache[:schemas].each do |schema,| %>
-		<%
-			tables = @cache[:tables].fetch schema, []
-			views = @cache[:views].fetch schema, []
-			functions = @cache[:functions].fetch schema, []
-		%>
 		<div class="js-submenu link item">
 			<span><i class="database icon"></i> <%= schema %></span>
 			<i class="caret right icon"></i>
@@ -22,26 +14,26 @@
 		<div class="menu transition hidden">
 
 			<div class="subheader">Schema</div>
-			<a class="item" href="<%= url "/schemas/#{schema}" %>"><span><i class="database icon"></i> Schema Overview</span></a>
+			<a class="item" href="<%= url "/schemas/#{schema}" %>"><span><i class="database icon"></i> <%= schema %></span></a>
 
-			<% unless tables.empty? %>
+			<% unless data[:tables].empty? %>
 				<div class="subheader">Tables</div>
-				<% tables.each do |schema_name, table_name| %>
+				<% data[:tables].each do |table_name, table| %>
 					<a class="item" href="<%= url "/schemas/#{schema}/tables/#{table_name}" %>"><span><i class="table icon"></i> <%= table_name %></span></a>
 				<% end %>
 			<% end %>
 
-			<% unless views.empty? %>
+			<% unless data[:views].empty? %>
 				<div class="subheader">Views</div>
-				<% views.each do |schema_name, view_name| %>
+				<% data[:views].each do |view_name, view| %>
 					<a class="item" href="<%= url "/schemas/#{schema}/views/#{view_name}" %>"><span><i class="table icon"></i> <%= view_name %></span></a>
 				<% end %>
 			<% end %>
 
-			<% unless functions.empty? %>
+			<% unless data[:functions].empty? %>
 				<div class="subheader">Functions</div>
-				<% functions.each do |row| %>
-					<a class="item" href="<%= url "/schemas/#{row["routine_schema"]}/functions/#{row["routine_name"]}" %>"><span><i class="table icon"></i> <%= row["routine_name"] %></span></a>
+				<% data[:functions].each do |routine_name, routine| %>
+					<a class="item" href="<%= url "/schemas/#{schema}/functions/#{routine_name}" %>"><span><i class="table icon"></i> <%= routine_name %></span></a>
 				<% end %>
 			<% end %>
 

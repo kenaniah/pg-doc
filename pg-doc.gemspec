@@ -8,6 +8,7 @@ Gem::Specification.new do |gem|
   gem.authors       = ["Kenaniah Cerny"]
   gem.email         = ["kenaniah@gmail.com"]
   gem.license       = "MIT"
+  gem.required_ruby_version = '2.3.0'
 
   gem.summary       = "Automatic documentation for your PostgreSQL database"
   gem.homepage      = "https://github.com/kenaniah/pg-doc"

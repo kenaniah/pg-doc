@@ -19,6 +19,16 @@ module PG
         erb :index
       end
 
+      get '/schemas/:schema' do
+        pass unless @cache.dig :schemas, params["schema"]
+        erb :"objects/schema"
+      end
+
+      get '/schemas/:schema/:object_type/:name' do
+        pass unless @cache.dig :schemas, params["schema"], params["object_type"].to_sym, params["name"]
+        erb :"objects/#{params["object_type"].sub(/s$/, "")}"
+      end
+
       # Initializes the internal state for this instance
       def setup connection, opts
 
@@ -30,8 +40,10 @@ module PG
           SQL
         }
 
-        @cache = Hash.new
-        @cache[:schemas] = @conn.exec(<<~SQL).values
+        @cache = {schemas: {}}
+
+        # Load schemas
+        _recordset = @conn.exec <<~SQL
           SELECT
             schema_name
           FROM
@@ -41,7 +53,16 @@ module PG
           ORDER BY
             1
         SQL
-        @cache[:tables] = @conn.exec(<<~SQL).values.group_by{ |row| row[0] }
+        _recordset.each_with_object(@cache){ |row, h|
+          h[:schemas][row["schema_name"]] = {
+            tables: {},
+            views: {},
+            functions: {}
+          }
+        }
+
+        # Load tables
+        _recordset = @conn.exec <<~SQL
           SELECT
             table_schema, table_name
           FROM
@@ -51,7 +72,12 @@ module PG
           ORDER BY
             1, 2
         SQL
-        @cache[:views] = @conn.exec(<<~SQL).values.group_by{ |row| row[0] }
+        _recordset.each_with_object(@cache){ |row, h|
+          h[:schemas][row["table_schema"]][:tables][row["table_name"]] = {}
+        }
+
+        # Load views
+        _recordset = @conn.exec <<~SQL
           SELECT
             table_schema, table_name, view_definition
           FROM
@@ -61,7 +87,14 @@ module PG
           ORDER BY
             1, 2
         SQL
-        @cache[:functions] = @conn.exec(<<~SQL).map.group_by{ |row| row["routine_schema"] }
+        _recordset.each_with_object(@cache){ |row, h|
+          h[:schemas][row["table_schema"]][:views][row["table_name"]] = {
+            view_definition: row["view_definition"]
+          }
+        }
+
+        # Load functions
+        _recordset = @conn.exec <<~SQL
           SELECT
             routine_schema, routine_name, routine_definition, external_language
           FROM
@@ -72,6 +105,12 @@ module PG
           ORDER BY
             1, 2
         SQL
+        _recordset.each_with_object(@cache){ |row, h|
+          h[:schemas][row["routine_schema"]][:functions][row["routine_name"]] = {
+            external_language: row["external_language"]
+          }
+        }
+
       end
 
     end
