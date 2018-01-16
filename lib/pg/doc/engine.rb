@@ -19,13 +19,13 @@ module PG
         erb :index
       end
 
-      get '/schemas/:schema' do
+      get '/schemas/:schema(.:ext)?' do
         object = @cache.dig :schemas, params["schema"]
         pass unless object
         erb :"objects/schema", locals: {object: object}
       end
 
-      get '/schemas/:schema/:object_type/:name' do
+      get '/schemas/:schema/:object_type/:name(.:ext)?' do
         object = @cache.dig :schemas, params["schema"], params["object_type"].to_sym, params["name"]
         pass unless object
         erb :"objects/#{params["object_type"].sub(/s$/, "")}", locals: {object: object}

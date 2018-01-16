@@ -8,7 +8,11 @@ CODE {
 	padding: 2px 4px;
 	border-radius: 4px;
 }
-.main.container {
+CODE:empty {
+	display: none;
+}
+.ui.text.main.container {
+	max-width: calc(100% - 14em) !important;
 	margin-top: 7em;
 }
 .scroll-padding {
