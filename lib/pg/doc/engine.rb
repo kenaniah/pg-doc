@@ -87,6 +87,7 @@ module PG
         _recordset.each_with_object(@cache){ |row, h|
           h[:schemas][row["table_schema"]][:tables][row["table_name"]] = {
             columns: [],
+            foreign_keys: {},
             comment: row["comment"]
           }
         }
@@ -163,6 +164,51 @@ module PG
             comment: row["comment"],
             arguments: row["arguments"].split(",").map{ |arg| parse_function_argument arg }
           }
+        }
+
+        # Load foreign keys
+        _recordset = @conn.exec <<~SQL
+          SELECT
+            tc.table_schema,
+            tc.table_name,
+            tc.constraint_name,
+            tc.constraint_type,
+            kcu.column_name,
+            tc.is_deferrable,
+            tc.initially_deferred,
+            rc.match_option AS match_type,
+
+            rc.update_rule AS on_update,
+            rc.delete_rule AS on_delete,
+            ccu.table_schema AS references_schema,
+            ccu.table_name AS references_table,
+            ccu.column_name AS references_field
+
+          FROM
+            information_schema.table_constraints tc
+
+          LEFT JOIN information_schema.key_column_usage kcu
+            ON tc.constraint_catalog = kcu.constraint_catalog
+            AND tc.constraint_schema = kcu.constraint_schema
+            AND tc.constraint_name = kcu.constraint_name
+
+          LEFT JOIN information_schema.referential_constraints rc
+            ON tc.constraint_catalog = rc.constraint_catalog
+            AND tc.constraint_schema = rc.constraint_schema
+            AND tc.constraint_name = rc.constraint_name
+
+          LEFT JOIN information_schema.constraint_column_usage ccu
+            ON rc.unique_constraint_catalog = ccu.constraint_catalog
+            AND rc.unique_constraint_schema = ccu.constraint_schema
+            AND rc.unique_constraint_name = ccu.constraint_name
+
+          WHERE
+            tc.constraint_type = 'FOREIGN KEY'
+          ORDER BY
+            1, 2
+        SQL
+        _recordset.each_with_object(@cache){ |row, h|
+          h[:schemas][row["table_schema"]][:tables][row["table_name"]][:foreign_keys][row["column_name"]] = row
         }
 
       end

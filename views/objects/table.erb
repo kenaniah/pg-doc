@@ -22,9 +22,9 @@
 		<% object[:columns].each do |row| %>
 		<tr>
 			<td>
-				<% if false && fk = fk_list[row[:column_name]].first %>
-					<i class="fa fa-fw fa-book"></i>
-					<%= link_to row[:column_name], postdoc_show_table_path(fk[:references_schema], fk[:references_table]), title: "#{fk[:references_schema]}.#{fk[:references_table]}" %>
+				<% if fk = object[:foreign_keys].fetch(row["column_name"], nil) %>
+					<i class="icon book"></i>
+					<a href="<%= url "/schemas/#{fk["references_schema"]}/tables/#{fk["references_table"]}" %>" title="<%= fk["references_schema"] %>.<%= fk["references_table"] %>"><%= row["column_name"] %></a>
 				<% else %>
 					<%= row["column_name"] %>
 				<% end %>
