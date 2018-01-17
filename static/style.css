@@ -38,3 +38,13 @@ CODE:empty {
 	padding-bottom: 2px;
 	border-bottom: 1px solid rgb(234, 236, 239);
 }
+.ui.table TD {
+	overflow: scroll !important;
+	text-overflow: unset !important;
+	white-space: nowrap;
+}
+
+.ui.table TD::-webkit-scrollbar {
+	width: 0;
+	height: 0;
+}

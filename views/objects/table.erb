@@ -1,3 +1,14 @@
+<%
+def fk_action_color action
+	case action
+	when 'CASCADE'
+		'negative'
+	when 'SET NULL'
+		'warning'
+	end
+end
+%>
+
 <h1>
 	Table - <code><%= params["schema"] %>.<%= params["name"] %></code>
 </h1>
@@ -30,9 +41,32 @@
 				<% end %>
 			</td>
 			<td><%= row["data_type"] %></td>
-			<td class="<%= row["is_nullable"] == 'NO' && row["column_default"].to_s.empty? ? 'info' : '' %>"><%= row["is_nullable"] == 'NO' ? '<i class="icon check"></i>' : ''%></td>
+			<td class="<%= row["is_nullable"] == 'NO' && row["column_default"].to_s.empty? ? 'warning' : '' %>"><%= row["is_nullable"] == 'NO' ? '<i class="icon check"></i>' : ''%></td>
 			<td><code><%= row["column_default"] %></code></td>
 		</tr>
 		<% end %>
 	</tbody>
 </table>
+
+
+<% unless object[:foreign_keys].empty? %>
+	<h2>Foreign Keys</h2>
+	<table class="ui compact fixed celled table">
+		<thead>
+			<th>Column Name</th>
+			<th>References</th>
+			<th>On Delete</th>
+			<th>Constraint Name</th>
+		</thead>
+		<tbody>
+			<% object[:foreign_keys].each do |column_name, row| %>
+			<tr>
+				<td><%= row["column_name"] %></td>
+				<td><i class="icon book"></i> <a href="<%= url "/schemas/#{row["references_schema"]}/tables/#{row["references_table"]}" %>" title="<%= row["references_schema"] %>.<%= row["references_table"] %>"><%= "#{row["references_schema"]}.#{row["references_table"]}" %></a></td>
+				<td class="<%= fk_action_color row["on_delete"] %>"><%= row["on_delete"] %></td>
+				<td><%= row["constraint_name"] %></td>
+			</tr>
+			<% end %>
+		</tbody>
+	</table>
+<% end %>
