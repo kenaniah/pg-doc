@@ -88,6 +88,7 @@ module PG
           h[:schemas][row["table_schema"]][:tables][row["table_name"]] = {
             columns: [],
             foreign_keys: {},
+            indexes: {},
             comment: row["comment"]
           }
         }
@@ -209,6 +210,40 @@ module PG
         SQL
         _recordset.each_with_object(@cache){ |row, h|
           h[:schemas][row["table_schema"]][:tables][row["table_name"]][:foreign_keys][row["column_name"]] = row
+        }
+
+        # Load indexes
+        _recordset = @conn.exec <<~SQL
+          SELECT
+            ns.nspname AS table_schema,
+            t.relname AS table_name,
+            U.usename AS user_name,
+            i.relname AS index_name,
+            idx.indisunique AS is_unique,
+            idx.indisprimary AS is_primary,
+            am.amname AS index_type,
+            idx.indkey,
+            ARRAY(
+              SELECT pg_get_indexdef(idx.indexrelid, k + 1, TRUE)
+              FROM generate_subscripts(idx.indkey, 1) AS k
+              ORDER BY k
+            ) AS index_keys,
+            (idx.indexprs IS NOT NULL) OR (idx.indkey::int[] @> array[0]) AS is_functional,
+            idx.indpred IS NOT NULL AS is_partial
+          FROM
+            pg_index AS idx
+            JOIN pg_class AS i ON i.oid = idx.indexrelid
+            JOIN pg_class AS t ON t.oid = idx.indrelid
+            JOIN pg_am AS am ON i.relam = am.oid
+            JOIN pg_namespace AS ns ON i.relnamespace = ns.oid
+            JOIN pg_user AS U ON i.relowner = U.usesysid
+          WHERE
+            #{@schema_filter.call :"ns.nspname"}
+          ORDER BY
+            1, 2, idx.indisprimary DESC, i.relname
+        SQL
+        _recordset.each_with_object(@cache){ |row, h|
+          h[:schemas][row["table_schema"]][:tables][row["table_name"]][:indexes][row["index_name"]] = row
         }
 
       end

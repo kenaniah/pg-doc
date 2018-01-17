@@ -26,7 +26,7 @@ end
 	<thead>
 		<th>Column Name</th>
 		<th>Data Type</th>
-		<th>Required Field?</th>
+		<th class="three wide">Required Field?</th>
 		<th>Default Value</th>
 	</thead>
 	<tbody>
@@ -55,7 +55,7 @@ end
 		<thead>
 			<th>Column Name</th>
 			<th>References</th>
-			<th>On Delete</th>
+			<th class="three wide">On Delete</th>
 			<th>Constraint Name</th>
 		</thead>
 		<tbody>
@@ -70,3 +70,25 @@ end
 		</tbody>
 	</table>
 <% end %>
+
+<h2>Indexes</h2>
+<table class="ui compact fixed celled table">
+	<thead>
+		<th>Index Name</th>
+		<th class="two wide">Primary?</th>
+		<th class="two wide">Unique?</th>
+		<th class="two wide">Type</th>
+		<th>Columns</th>
+	</thead>
+	<tbody>
+		<% object[:indexes].each do |index_name, row| %>
+		<tr>
+			<td><%= row["index_name"] %></td>
+			<td><% if row["is_primary"] == "t" %><i class="icon check"></i><% end %></td>
+			<td><% if row["is_unique"] == "t" %><i class="icon check"></i><% end %></td>
+			<td><%= row["index_type"] %></td>
+			<td><%= row["index_keys"][1..-2].split(",").join ", " %></td>
+		</tr>
+		<% end %>
+	</tbody>
+</table>
