@@ -34,7 +34,14 @@
 			<% unless data[:functions].empty? %>
 				<div class="subheader">Functions</div>
 				<% data[:functions].each do |routine_name, routine| %>
-					<a class="item" href="<%= url "/schemas/#{schema}/functions/#{routine_name}" %>"><span><i class="table icon"></i> <%= routine_name %></span></a>
+					<a class="item" href="<%= url "/schemas/#{schema}/functions/#{routine_name}" %>"><span><i class="code icon"></i> <%= routine_name %></span></a>
+				<% end %>
+			<% end %>
+
+			<% unless data[:triggers].empty? %>
+				<div class="subheader">Triggers</div>
+				<% data[:triggers].each do |routine_name, routine| %>
+					<a class="item" href="<%= url "/schemas/#{schema}/triggers/#{routine_name}" %>"><span><i class="lightning icon"></i> <%= routine_name %></span></a>
 				<% end %>
 			<% end %>
 

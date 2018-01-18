@@ -67,7 +67,8 @@ module PG
           h[:schemas][row["schema_name"]] = {
             tables: {},
             views: {},
-            functions: {}
+            functions: {},
+            triggers: {}
           }
         }
 
@@ -81,6 +82,7 @@ module PG
             information_schema.tables
           WHERE
             #{@schema_filter.call :table_schema}
+            AND table_type != 'VIEW'
           ORDER BY
             1, 2
         SQL
@@ -150,6 +152,8 @@ module PG
             routine_definition,
             external_language,
             pg_get_function_identity_arguments((routine_schema || '.' || routine_name)::regproc) as arguments,
+            pg_get_functiondef((routine_schema || '.' || routine_name)::regproc) as function_definition,
+            pg_get_function_result((routine_schema || '.' || routine_name)::regproc) as function_result,
             obj_description((routine_schema || '.' || routine_name)::regproc::oid, 'pg_proc') as comment
           FROM
             information_schema.routines
@@ -160,10 +164,13 @@ module PG
             1, 2
         SQL
         _recordset.each_with_object(@cache){ |row, h|
-          h[:schemas][row["routine_schema"]][:functions][row["routine_name"]] = {
+          dest = row["function_result"] == "trigger" ? :triggers : :functions
+          h[:schemas][row["routine_schema"]][dest][row["routine_name"]] = {
             external_language: row["external_language"],
             comment: row["comment"],
-            arguments: row["arguments"].split(",").map{ |arg| parse_function_argument arg }
+            arguments: row["arguments"].split(",").map{ |arg| parse_function_argument arg },
+            function_definition: row["function_definition"],
+            function_result: row["function_result"]
           }
         }
 
@@ -271,7 +278,7 @@ module PG
           type = arg
         end
 
-        {name: name, type: type, mode: argmode}
+        {"name" => name, "type" => type, "mode" => argmode}
 
       end
 

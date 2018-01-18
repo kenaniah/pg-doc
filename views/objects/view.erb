@@ -3,11 +3,11 @@
 </h1>
 
 <% if object[:comment] %>
-	<h2>Database Comment</h2>
+	<h2>Description</h2>
 	<p><%= object[:comment] %></p>
 <% end %>
 
-<%= render_markdown "schema/#{params["schema"]}/#{params["name"]}.md" %>
+<%= render_markdown "schema/#{params["schema"]}/views/#{params["name"]}.md" %>
 
 <table class="ui compact fixed celled table">
 	<thead>

@@ -1,1 +1,33 @@
-<%= object %>
+<h1>
+	<%= object[:external_language]%> Function - <code><%= params["schema"] %>.<%= params["name"] %></code>
+</h1>
+
+<% if object[:comment] %>
+	<h2>Description</h2>
+	<p><%= object[:comment] %></p>
+<% end %>
+
+<%= render_markdown "schema/#{params["schema"]}/functions/#{params["name"]}.md" %>
+
+<h2>Function Arguments</h2>
+<table class="ui compact fixed celled table">
+	<thead>
+		<th>Argument Name</th>
+		<th>Data Type</th>
+		<th>Argument Mode</th>
+	</thead>
+	<tbody>
+		<% object[:arguments].each do |row| %>
+		<tr>
+			<td><%= row["name"] %></td>
+			<td><%= row["type"] %></td>
+			<td><%= row["mode"] %></td>
+		</tr>
+		<% end %>
+	</tbody>
+</table>
+
+<% if object[:function_definition] %>
+	<h2>Function Definition</h2>
+	<pre class="ui segment sql"><%= CGI.escapeHTML object[:function_definition] %></pre>
+<% end %>

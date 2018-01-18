@@ -1,0 +1,15 @@
+<h1>
+	<%= object[:external_language]%> Trigger - <code><%= params["schema"] %>.<%= params["name"] %></code>
+</h1>
+
+<% if object[:comment] %>
+	<h2>Description</h2>
+	<p><%= object[:comment] %></p>
+<% end %>
+
+<%= render_markdown "schema/#{params["schema"]}/triggers/#{params["name"]}.md" %>
+
+<% if object[:function_definition] %>
+	<h2>Trigger Definition</h2>
+	<pre class="ui segment sql"><%= CGI.escapeHTML object[:function_definition] %></pre>
+<% end %>
