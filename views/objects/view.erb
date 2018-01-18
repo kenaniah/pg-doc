@@ -1,1 +1,33 @@
-<h2>Coming Soon!</h2>
+<h1>
+	View - <code><%= params["schema"] %>.<%= params["name"] %></code>
+</h1>
+
+<% if object[:comment] %>
+	<h2>Database Comment</h2>
+	<p><%= object[:comment] %></p>
+<% end %>
+
+<%= render_markdown "schema/#{params["schema"]}/#{params["name"]}.md" %>
+
+<table class="ui compact fixed celled table">
+	<thead>
+		<th>Column Name</th>
+		<th>Data Type</th>
+		<th>Comment</th>
+	</thead>
+	<tbody>
+		<% object[:columns].each do |row| %>
+		<tr>
+			<td><%= row["column_name"] %></td>
+			<td><%= row["data_type"] %></td>
+			<td><%= row["comment"] %></td>
+		</tr>
+		<% end %>
+	</tbody>
+</table>
+
+<h2>View Definition</h2>
+
+<pre class="ui segment sql">
+<%= CGI.escapeHTML object[:view_definition] %>
+</pre>

@@ -1,4 +1,4 @@
-$(document).ready(() =>
+$(document).ready(() => {
 
 	// Toggles submenues in navigation
 	$(document).on("click", ".js-submenu", (event) => {
@@ -6,4 +6,9 @@ $(document).ready(() =>
 		$(event.currentTarget).next("DIV.menu").transition('toggle')
 	})
 
-);
+	// Handles code highlighting
+	$('PRE').each((i, block) => {
+		hljs.highlightBlock(block)
+	})
+
+});
