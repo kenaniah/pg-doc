@@ -134,6 +134,7 @@ module PG
             JOIN information_schema.tables t USING (table_catalog, table_schema, table_name)
           WHERE
             #{@schema_filter.call :table_schema}
+            AND table_type = 'BASE TABLE'
           ORDER BY
             1, 2, 4
         SQL
